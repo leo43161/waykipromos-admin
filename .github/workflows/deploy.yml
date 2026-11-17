@@ -59,7 +59,7 @@ jobs:
           password: ${{ secrets.CPANEL_PASSWORD }}
           port: 21
           local-dir: ./upload_dir/
-          server-dir: /waykipromo/admin/
+          server-dir: /admin/
 
       # descomprimir.php extrae el ZIP en public_html/waykipromo/admin/ y lo borra.
       # El secreto va en una cabecera (no en la URL, que queda en los logs del servidor).
