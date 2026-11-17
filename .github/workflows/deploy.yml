@@ -1,0 +1,72 @@
+name: Deploy Wayki Promo · Admin a cPanel
+
+# Publica este proyecto en public_html/waykipromo/admin/  →  https://tucumanturismo.gob.ar/waykipromo/admin/
+# Configuración única (servidor, secrets y variables): ver deploy/README.md en la carpeta raíz de Wayki Promo.
+#
+# Secrets del repo (Settings → Secrets and variables → Actions → Secrets):
+#   CPANEL_SERVER, CPANEL_USERNAME, CPANEL_PASSWORD  → los mismos del proyecto principal
+#   WAYKI_UNZIP_SECRET                               → el mismo valor que SECRETO en descomprimir.php
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # ejecución manual desde la pestaña Actions
+
+concurrency:
+  # Una sola ejecución por rama; si llega un push nuevo, cancela la anterior.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # basePath: sin esto los HTML pedirían /_next/… a la raíz (el proyecto principal) y se rompería todo.
+      - name: Build static site
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /waykipromo/admin
+
+      # El ZIP no incluye la carpeta out/, solo su contenido.
+      - name: Compress build output
+        run: |
+          mkdir upload_dir
+          cd out
+          zip -qr ../upload_dir/deploy.zip .
+
+      # Cada app sube a su propia carpeta de _deploy/ (así no se pisan entre repos).
+      # server-dir asume que el usuario FTP arranca en public_html (igual que el proyecto principal, que usa "/").
+      # Si arranca en /home/<usuario>, anteponé /public_html.
+      - name: Upload ZIP to cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.CPANEL_SERVER }}
+          username: ${{ secrets.CPANEL_USERNAME }}
+          password: ${{ secrets.CPANEL_PASSWORD }}
+          port: 21
+          local-dir: ./upload_dir/
+          server-dir: /waykipromo/admin/
+
+      # descomprimir.php extrae el ZIP en public_html/waykipromo/admin/ y lo borra.
+      # El secreto va en una cabecera (no en la URL, que queda en los logs del servidor).
+      - name: Trigger unzip on server
+        env:
+          UNZIP_SECRET: ${{ secrets.WAYKI_UNZIP_SECRET }}
+        run: >
+          curl --fail-with-body -sS -X POST
+          -H "X-Deploy-Secret: $UNZIP_SECRET"
+          "https://tucumanturismo.gob.ar/waykipromo/admin/descomprimir.php?secret=${{ secrets.UNZIP_SECRET }}"

@@ -1,0 +1,23 @@
+.form { display: grid; gap: 16px; }
+
+.clave { position: relative; }
+.clave input { padding-right: 96px; }
+.clave button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  bottom: 4px;
+  min-width: 84px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.form :global(.btn.full) { min-height: 52px; margin-top: 4px; font-size: 15px; }
+
+.prueba { display: grid; gap: 10px; padding: 14px; border: 1.5px dashed var(--orange); border-radius: 14px; background: #fff7ef; font-size: 12px; font-weight: 700; }
+.prueba div { display: flex; flex-wrap: wrap; gap: 6px; }
+.prueba :global(.btn) { min-height: 36px; padding: 6px 12px; font-size: 12px; }
