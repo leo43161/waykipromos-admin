@@ -21,7 +21,7 @@ const K_PANEL = 'wayki-panel-sim';
 /** Canjes de todos los cupones (los del panel y los del turista): { [codigo]: CanjeGuardado }. */
 export const K_CANJES = 'wayki-canjes-sim';
 const ES_TURISTA = /^wayki-sim-\d+$/;
-const VERSION = 1;
+const VERSION = 2; // subirla cuando cambian los datos de ejemplo: la base guardada se rehace
 
 // ================================================================== tipos internos
 type ComercioFila = {
@@ -137,6 +137,10 @@ function semilla(): Base {
   penias.dias_validos = ['VIE', 'SAB'];
   penias.horario = { desde: '21:00', hasta: '02:00' };
 
+  const merienda = promo(2, 10, 'La merienda se comparte', 'Dos meriendas, una invitación', '2×1', 2, 'merienda', '2027-01-15', 54);
+  merienda.dias_validos = ['LUN', 'MAR', 'MIE', 'JUE', 'VIE']; // igual que en turista/lib/simulador.ts
+  merienda.horario = { desde: '16:00', hasta: '20:00' };
+
   return {
     version: VERSION,
     comercios: [
@@ -162,7 +166,7 @@ function semilla(): Base {
     promociones: [
       promo(1, 10, 'Empanadas que cuentan historias', 'En una docena de empanadas tucumanas', '20%', 2, 'empanadas', '2027-01-31', 37, true),
       promo(6, 11, 'Tu refugio en el valle', 'En dos noches con desayuno casero', '25%', 1, 'alojamiento', '2027-02-15', 12, true),
-      promo(2, 10, 'La merienda se comparte', 'Dos meriendas, una invitación', '2×1', 2, 'merienda', '2027-01-15', 54),
+      merienda,
       promo(9, 12, 'Senderos para desconectar', 'En trekking guiado por el valle', '20%', 3, 'montana', '2027-03-01', 8, true),
       promo(14, 13, 'Historias a cada paso', 'En el recorrido guiado por el casco histórico', '2×1', 3, 'cultura', '2027-02-28', 61),
       promo(26, 14, 'El dique desde otra mirada', 'En paseo en kayak con equipo incluido', '25%', 3, 'dique', '2027-02-15', 40),
