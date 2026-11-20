@@ -200,7 +200,10 @@ function Ficha({ id }: { id: number }) {
       </section>
 
       <section className="panel" aria-labelledby="equipo-titulo">
-        <h2 id="equipo-titulo" className={s.titulito}>Equipo del comercio</h2>
+        <div className={s.seccionCabecera}>
+          <h2 id="equipo-titulo" className={s.titulito}>Equipo del comercio</h2>
+          <Link href={`/usuarios/?nuevo&comercio_id=${c.id}`} className="btn secondary">Agregar persona</Link>
+        </div>
         {equipo.dato?.datos.length ? (
           <div className={s.tablaCaja}>
             <table className={s.tabla}>
@@ -215,7 +218,7 @@ function Ficha({ id }: { id: number }) {
               ))}</tbody>
             </table>
           </div>
-        ) : <p className="muted">{equipo.cargando ? 'Cargando…' : 'Este comercio todavía no tiene usuarios.'}</p>}
+        ) : <p className="muted">{equipo.cargando ? 'Cargando…' : 'Este comercio todavía no tiene usuarios. Creale el acceso al encargado.'}</p>}
       </section>
 
       <Dialogo abierto={dialogo === 'editar'} onCerrar={() => setDialogo(null)} titulo={`Editar ${c.nombre}`}>
@@ -261,6 +264,7 @@ function FormComercio({ cat, actual, onListo, onCancelar }: {
   }
 
   const err = (k: string) => campos[k] && <span className={s.errorCampo}>{campos[k]}</span>;
+  if (!cat) return <p className={s.contador}>Cargando…</p>; // los <select> necesitan sus opciones para el valor inicial
   return (
     <form className={s.form} onSubmit={enviar} noValidate>
       <label className="field">Nombre del comercio

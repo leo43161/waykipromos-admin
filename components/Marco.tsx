@@ -53,7 +53,7 @@ export default function Marco({ children }: { children: React.ReactNode }) {
         {menu.length > 1 && (
           <nav className={s.menu} aria-label="Secciones del panel">
             {menu.map((x) => (
-              <Link key={x.ruta} href={x.ruta} aria-current={x === seccion ? 'page' : undefined}>{x.nombre}</Link>
+              <Link key={x.ruta} href={x.ruta} aria-current={x === seccion ? 'page' : undefined}>{x.nombrePara?.[sesion.rol] ?? x.nombre}</Link>
             ))}
           </nav>
         )}

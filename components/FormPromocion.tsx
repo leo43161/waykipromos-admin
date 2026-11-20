@@ -86,6 +86,8 @@ export default function FormPromocion({ actual }: { actual?: PromocionGestionApi
 
   const err = (k: string) => campos[k] && <span className={s.errorCampo}>{campos[k]}</span>;
   const volver = actual ? `/promociones/?id=${actual.id}` : '/promociones/';
+  // Sin las listas, los <select> con defaultValue no encuentran su opción: esperamos a tenerlas.
+  if (!opciones) return <main id="contenido" className={`${s.main} content-width`}><p className={s.contador}>Cargando…</p></main>;
 
   return (
     <main id="contenido" className={`${s.main} content-width`}>

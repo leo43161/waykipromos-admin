@@ -102,3 +102,8 @@
 .promoTitulo > span { display: flex; flex-wrap: wrap; gap: 6px; }
 .promoTitulo h1 { font-size: clamp(24px, 3vw, 32px); }
 .ancho { grid-column: 1 / -1; }
+
+/* Usuarios: confirmación dentro del diálogo y la contraseña temporal bien legible */
+.confirmar { display: grid; gap: 12px; padding: 14px 16px; border-radius: 12px; background: var(--paper); }
+.clave { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 18px; letter-spacing: 0.04em; user-select: all; }
+.seccionCabecera { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }

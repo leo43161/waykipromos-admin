@@ -47,6 +47,7 @@ app/(panel)/layout.tsx   todas las pantallas con sesión van en el grupo (panel)
 app/(panel)/panel/       inicio según el rol (resumen del período)     → /waykipromo/admin/panel/
 app/(panel)/canjear/     canjear un cupón (empleado, encargado, superadmin)
 app/(panel)/comercios/   comercios del Ente: listado, ficha (?id=), alta, edición, suspensión, logo
+app/(panel)/usuarios/    usuarios (Ente: todos; encargado: "Mi equipo"); ?nuevo&comercio_id= abre el alta para un comercio
 app/(panel)/promociones/ promociones (Ente: todas; encargado: las suyas): listado, ficha (?id=), ?nueva, ?id=&editar
 app/globals.css          tokens + base (COMPARTIDO con turista/)
 components/Brand.tsx     logo Wayki | PROMO (COMPARTIDO)
@@ -58,6 +59,7 @@ components/Dialogo.tsx   ventana modal con <dialog> nativo
 components/GraficoDiario.tsx cupones y canjes por día (colores validados con dataviz; cursor, flechas y tabla)
 components/Comercios.tsx comercios (Ente)
 components/Promociones.tsx listado, ficha y cambios de estado (pasos del contrato, con confirmación y motivo)
+components/Usuarios.tsx  alta (usuario sugerido, contraseña temporal una sola vez), editar, bloquear, baja, contraseña nueva
 components/FormPromocion.tsx crear/editar (beneficio, fechas, cupos, días, horario, categoría, foto, destacada)
 components/Canjear.tsx   canje: escanear o escribir → ver el cupón (validar) → canjear; errores con su detalle
 components/Camara.tsx    cámara trasera + recuadro; lee el QR con BarcodeDetector o jsQR (se descarga solo si hace falta)
@@ -100,7 +102,7 @@ pruebas/simulador.mjs    prueba del simulador (node, sin dependencias)
 
 ## Próximos pasos sugeridos
 
-Hechos: marco con menú por rol, canjear, inicio con resumen, comercios, promociones. Una sección nueva = su ruta en
+Hechos: marco con menú por rol, canjear, inicio con resumen, comercios, promociones, usuarios. Una sección nueva = su ruta en
 `app/(panel)/` + su línea en `SECCIONES` (`lib/roles.ts`) + estilos de `Gestion.module.css`.
 Plan al 3 de diciembre (ver BITACORA): promociones → usuarios → visitantes → reportes → actividad → canjes
 (historial) → prestador (sus promociones y su equipo, reusando las mismas pantallas).

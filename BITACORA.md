@@ -4,6 +4,25 @@ Registro de sesiones de trabajo. Lo más nuevo arriba. Formato: fecha, qué se h
 
 ---
 
+## 2026-11-20 (noche, 2) — Usuarios y "Mi equipo"
+
+**Hecho**
+- `/usuarios/`: el Ente ve a todos (filtros por rol, estado y comercio) y crea encargados y empleados (el superadmin,
+  también gente del Ente); el encargado ve "Mi equipo" y agrega empleados de su comercio.
+- Alta en un diálogo: usuario sugerido a partir del nombre ("Ana Torres" → `ana.torres`), rol y comercio según quién
+  crea. La contraseña temporal la genera la API y se muestra **una sola vez**, con "Copiar usuario y contraseña".
+- "Gestionar": datos, editar (nombre, correo, teléfono, rol dentro del mismo ámbito), bloquear, activar, dar de baja y
+  contraseña nueva, cada acción con su confirmación. A uno mismo y a quien no administra no se lo puede tocar.
+- Ficha del comercio: botón "Agregar persona" → `/usuarios/?nuevo&comercio_id=N` (circuito alta de comercio → su encargado).
+- `lib/roles.ts`: `ADMINISTRA` (quién crea a quién) y `nombrePara` en `SECCIONES` ("Mi equipo" para el encargado).
+- **Corregido**: los `<select>` con valor inicial perdían la opción si la lista llegaba después de abrir el formulario
+  (el alta podía quedar para otro comercio). Usuarios usa un valor controlado; los formularios de comercio y promoción
+  esperan a tener las listas.
+- Verificado en el navegador: alta desde la ficha del comercio, usuario repetido, bloquear/activar, cambiar rol,
+  contraseña nueva, **ingreso del usuario creado con su contraseña temporal**, y "Mi equipo" del encargado. 42 chequeos.
+
+---
+
 ## 2026-11-20 (noche) — Promociones (Ente y encargado)
 
 **Hecho**
