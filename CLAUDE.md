@@ -35,7 +35,7 @@ contraseña (tabla `USUARIO`, campo `nombreu`); lo que se ve depende del **rol**
 npm install
 npm run dev                   # http://localhost:3001  (login con los usuarios de prueba del simulador)
 npm run build                 # out/ + chequeo de tipos
-node pruebas/simulador.mjs    # 41 chequeos del simulador, conectado al del turista (permisos, canje, reportes, CSV)
+node pruebas/simulador.mjs    # 42 chequeos del simulador, conectado al del turista (permisos, canje, reportes, CSV)
 ```
 
 ## Estructura
@@ -44,10 +44,14 @@ node pruebas/simulador.mjs    # 41 chequeos del simulador, conectado al del turi
 app/layout.tsx           metadata (noindex, nofollow), fuentes Montserrat + Anton, skip-link
 app/page.tsx             login (escena oscura del kit + formulario)   → /waykipromos/admin/
 app/panel/page.tsx       inicio según el rol                           → /waykipromos/admin/panel/
+app/canjear/page.tsx     canjear un cupón (empleado, encargado, superadmin) → /waykipromos/admin/canjear/
 app/globals.css          tokens + base (COMPARTIDO con turista/)
 components/Brand.tsx     logo Wayki | PROMO (COMPARTIDO)
 components/Login.tsx     formulario + usuarios de prueba (mientras `sesion` esté simulada)
 components/Panel.tsx     inicio por rol; valida la sesión con GET /panel/sesion; sin sesión vuelve al login
+components/Encabezado.tsx barra de arriba del panel (logo + Salir)
+components/Canjear.tsx   canje: escanear o escribir → ver el cupón (validar) → canjear; errores con su detalle
+components/Camara.tsx    cámara trasera + recuadro; lee el QR con BarcodeDetector o jsQR (se descarga solo si hace falta)
 lib/api.ts               cliente de la API + tipos del contrato + etapas (NEXT_PUBLIC_API_ETAPAS)
 lib/simulador.ts         backend simulado de los 35 endpoints del panel (conectado al simulador del turista)
 lib/roles.ts             roles (códigos del contrato) y qué puede cada uno
@@ -70,8 +74,10 @@ pruebas/simulador.mjs    prueba del simulador (node, sin dependencias)
 - **Canje (empleado)**: ingresar/escanear código → verificar → confirmar (definitivo). Resultados: válido ·
   ya utilizado · vencido · de otro comercio · inexistente · sin conexión. Transacción atómica e idempotente en
   el backend; la UI nunca marca un canje por su cuenta ni reintenta a ciegas. Cámara: `getUserMedia` (HTTPS)
-  y `BarcodeDetector` primero; una librería de QR solo si hace falta para iOS.
-  Códigos de prueba del demo: `WAYKI25` disponible, `USADO01` canjeado, `VENC001` vencido, `AJENO01` de otro comercio.
+  y `BarcodeDetector` donde existe (Android); si no (iPhone, Chrome de escritorio), `jsqr` con import dinámico.
+  Un reintento de "Canjear" que vuelve `CUPON_YA_CANJEADO` por el mismo usuario se muestra como hecho (contrato).
+  Códigos de prueba (botones en la pantalla mientras `canje` esté simulada): `WAYKI25` disponible, `USADO01`
+  canjeado, `VENC001` vencido, `AJENO01` de otro comercio, `PENIA01` con días y horario. Son de Patio del Jardín.
 - Exportar CSV: neutralizar fórmulas (`=`, `+`, `-`, `@` al inicio de celda), como el demo.
 - Datos de visitantes = datos personales: mostrar solo lo necesario.
 
@@ -84,7 +90,6 @@ pruebas/simulador.mjs    prueba del simulador (node, sin dependencias)
 ## Próximos pasos sugeridos
 
 1. Layout de panel (barra lateral en escritorio, navegación inferior en celular) con las secciones del rol.
-2. Empleado: pantalla "Canjear cupón" (lo más usado, celular primero). Con el simulador ya se puede probar el
-   circuito completo: guardar un cupón en la app del turista y canjearlo acá (en producción, mismo navegador).
+2. ~~Canjear cupón~~ (hecho 2026-11-20). Falta "Mis canjes" (GET /panel/canjes) para el empleado.
 3. Prestador: mis promociones (crear, publicar, pausar) + mi equipo.
 4. Creador: prestadores, usuarios, visitantes, reportes, actividad.

@@ -198,7 +198,7 @@ export type PromocionCuerpo = {
 /** POST /panel/canjes/validar → data (y detalles de sus errores 409). */
 export type CuponEnMostradorApi = {
   cupon: { codigo: string; estado: 'EMITIDO' | 'CANJEADO' | 'VENCIDO' | 'ANULADO'; emitido_el: string; vence_el: string };
-  promocion: { id: number; titulo: string; descuento_visual: string; condiciones: string | null; dias_validos: string[] | null; horario: Horario };
+  promocion: { id: number; titulo: string; descuento_visual: string; condiciones: string | null; dias_validos: string[] | null; horario: Horario; imagen_url: string | null };
   turista: { nombre: string };
 };
 /** POST /panel/canjes → data. */

@@ -6,6 +6,7 @@
 import { api, ErrorApi, type LoginApi, type Rol, type UsuarioSesionApi } from './api';
 
 export type SesionStaff = {
+  id: number;
   usuario: string;
   nombre: string;
   rol: Rol;
@@ -17,6 +18,7 @@ const K_TOKEN = 'wayki-admin-token';
 const K_SESION = 'wayki-admin-sesion';
 
 const aSesion = (u: UsuarioSesionApi): SesionStaff => ({
+  id: u.id,
   usuario: u.usuario,
   nombre: u.nombre,
   rol: u.rol,

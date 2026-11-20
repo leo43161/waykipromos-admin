@@ -4,6 +4,30 @@ Registro de sesiones de trabajo. Lo más nuevo arriba. Formato: fecha, qué se h
 
 ---
 
+## 2026-11-20 — Canjear un cupón
+
+**Hecho**
+- `/canjear/` (`components/Canjear.tsx` + `Camara.tsx`): cámara trasera con recuadro para centrar el QR → valida
+  (`POST /panel/canjes/validar`) → muestra el cupón con la foto arriba, beneficio, visitante, vencimiento, días, horario y
+  condiciones + observaciones opcionales → **Canjear** / Cancelar (botones fijos abajo) → "¡Listo! Entregá el beneficio".
+- Código a mano siempre visible (cámara sin permiso, sin https, QR dañado). Botones con los códigos de prueba mientras
+  `canje` esté simulada.
+- Errores con el mensaje de la API y una línea más con sus `detalles` (quién y cuándo lo canjeó, cuándo venció, qué días
+  y horario vale). Reintentar solo en cortes o fallas del servidor; un reintento que vuelve `CUPON_YA_CANJEADO` por el
+  mismo usuario se muestra como hecho (`SesionStaff` ahora guarda el `id`).
+- QR: `BarcodeDetector` donde existe; si no, `jsqr` 1.4.0 (nueva dependencia, la misma del demo) con import dinámico.
+  La cámara se apaga al salir del paso y con la pestaña oculta.
+- `components/Encabezado.tsx` (logo + Salir) compartido por el inicio y el canje; botón "Canjear un cupón" en el inicio
+  para empleado, encargado y superadmin.
+- **Contrato**: `CuponEnMostrador.promocion` suma `imagen_url` (`datos.mjs`, `CanjesController::cupon` y `sp_canjes_validar`).
+- Verificado en el navegador: válido → canjeado, los 5 códigos de prueba, reintento propio y ajeno. 42 chequeos. Build ok.
+
+**Pendiente**
+- Probar la cámara en un celular real (Android e iPhone): necesita https; en la red local por http no abre.
+- "Mis canjes" del empleado y el layout con navegación.
+
+---
+
 ## 2026-11-19 (tarde) — Simulador del panel, conectado al turista
 
 **Hecho**

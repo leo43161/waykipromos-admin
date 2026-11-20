@@ -45,6 +45,7 @@ chequear('token del turista no entra al panel', codigo(await P('GET', '/panel/se
 
 // ---- 3. Canje del cupón del turista ----
 const v = await P('POST', '/panel/canjes/validar', { codigo: deTurista.toLowerCase() }, lucia);
+chequear('validar trae la foto de la promoción (imagen_url)', 'imagen_url' in v.cuerpo.data.promocion);
 chequear('el panel valida el cupón del turista (nombre e inicial)', v.http === 200 && v.cuerpo.data.turista.nombre === 'Mara L.' && v.cuerpo.data.cupon.estado === 'EMITIDO');
 chequear('otro comercio: 403 CUPON_OTRO_COMERCIO', codigo(await P('POST', '/panel/canjes/validar', { codigo: deTurista }, sofia)) === 'CUPON_OTRO_COMERCIO');
 chequear('el Ente no canjea: 403', codigo(await P('POST', '/panel/canjes', { codigo: deTurista }, carla)) === 'ROL_NO_AUTORIZADO');

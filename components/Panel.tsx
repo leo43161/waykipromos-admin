@@ -5,10 +5,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Brand from '@/components/Brand';
+import Link from 'next/link';
+import Encabezado from '@/components/Encabezado';
 import { asset } from '@/lib/asset';
-import { ROLES } from '@/lib/roles';
-import { getSesion, salir, validarSesion, type SesionStaff } from '@/lib/sesion';
+import { CANJEAN, ROLES } from '@/lib/roles';
+import { getSesion, validarSesion, type SesionStaff } from '@/lib/sesion';
 import s from './Panel.module.css';
 
 export default function Panel() {
@@ -28,12 +29,7 @@ export default function Panel() {
 
   return (
     <>
-      <header className={s.header}>
-        <div className={`${s.headerIn} content-width`}>
-          <Brand label="Panel" />
-          <button type="button" className="btn ghost" onClick={() => { salir(); router.replace('/'); }}>Salir</button>
-        </div>
-      </header>
+      <Encabezado />
 
       <main id="contenido" className={`${s.main} content-width`}>
         <section className={s.saludo}>
@@ -44,6 +40,10 @@ export default function Panel() {
           </div>
           <img src={asset('/wayki-promo/mascota/wayki-busto.png')} alt="" width={546} height={456} className={s.wayki} />
         </section>
+
+        {CANJEAN.includes(sesion.rol) && (
+          <Link href="/canjear/" className={`btn accent ${s.canjear}`}>Canjear un cupón</Link>
+        )}
 
         <section aria-labelledby="puede-title">
           <h2 id="puede-title" className={s.subtitulo}>Lo que vas a poder hacer desde acá</h2>

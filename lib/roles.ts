@@ -6,6 +6,9 @@ import type { Rol } from './api';
 
 export type { Rol };
 
+/** Pueden canjear en el mostrador (POST /panel/canjes). */
+export const CANJEAN: Rol[] = ['superadmin', 'encargado', 'empleado'];
+
 export const ROLES: Record<Rol, { nombre: string; quien: string; puede: string[] }> = {
   superadmin: {
     nombre: 'Administrador',

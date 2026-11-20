@@ -94,6 +94,10 @@ const PAISES: Record<number, string> = {
 
 // ================================================================== usuarios de prueba (los muestra el login)
 export const CLAVE_DE_PRUEBA = 'wayki2026';
+/** Cupones de prueba (base de abajo) para la pantalla de canje. Son de Patio del Jardín (comercio 10): probalos con martin.rios o lucia.suarez. */
+export const CODIGOS_DE_PRUEBA: [string, string][] = [
+  ['WAYKI25', 'Se puede canjear'], ['USADO01', 'Ya usado'], ['VENC001', 'Vencido'], ['AJENO01', 'De otro comercio'], ['PENIA01', 'Con días y horario'],
+];
 export const USUARIOS_DE_PRUEBA: { usuario: string; quien: string }[] = [
   { usuario: 'admin', quien: 'Administrador (equipo técnico)' },
   { usuario: 'carla.ente', quien: 'Creador (Ente Tucumán Turismo)' },
@@ -377,7 +381,7 @@ function aSesion(u: UsuarioFila): UsuarioSesionApi {
 function enMostrador(c: Cupon): CuponEnMostradorApi {
   return {
     cupon: { codigo: c.codigo, estado: c.estado, emitido_el: c.emitido_el, vence_el: c.vence_el },
-    promocion: { id: c.promo.id, titulo: c.promo.titulo, descuento_visual: beneficio(c.promo), condiciones: c.promo.condiciones, dias_validos: c.promo.dias_validos, horario: c.promo.horario },
+    promocion: { id: c.promo.id, titulo: c.promo.titulo, descuento_visual: beneficio(c.promo), condiciones: c.promo.condiciones, dias_validos: c.promo.dias_validos, horario: c.promo.horario, imagen_url: c.promo.imagen_url },
     turista: { nombre: c.turista.nombre },
   };
 }
