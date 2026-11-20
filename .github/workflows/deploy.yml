@@ -6,6 +6,9 @@ name: Deploy Wayki Promo · Admin a cPanel
 # Secrets del repo (Settings → Secrets and variables → Actions → Secrets):
 #   CPANEL_SERVER, CPANEL_USERNAME, CPANEL_PASSWORD  → los mismos del proyecto principal
 #   WAYKI_UNZIP_SECRET                               → el mismo valor que SECRETO en descomprimir.php
+# Variables del repo (pestaña Variables; no son secretas, quedan en el JS publicado):
+#   NEXT_PUBLIC_API_ETAPAS  → etapas que usan la API real: sesion,catalogos,canje,promociones,comercios,usuarios,ente
+#                             (vacía = todo simulado en el navegador; ver lib/api.ts)
 
 on:
   push:
@@ -40,6 +43,8 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /waykipromo/admin
+          NEXT_PUBLIC_API_URL: https://tucumanturismo.gob.ar/waykipromo/api/v1
+          NEXT_PUBLIC_API_ETAPAS: ${{ vars.NEXT_PUBLIC_API_ETAPAS }}
 
       # El ZIP no incluye la carpeta out/, solo su contenido.
       - name: Compress build output

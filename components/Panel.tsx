@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import Brand from '@/components/Brand';
 import { asset } from '@/lib/asset';
 import { ROLES } from '@/lib/roles';
-import { getSesion, salir, type SesionStaff } from '@/lib/sesion';
+import { getSesion, salir, validarSesion, type SesionStaff } from '@/lib/sesion';
 import s from './Panel.module.css';
 
 export default function Panel() {
@@ -17,8 +17,10 @@ export default function Panel() {
 
   useEffect(() => {
     const actual = getSesion();
-    if (actual) setSesion(actual);
-    else router.replace('/');
+    if (!actual) return router.replace('/');
+    setSesion(actual);
+    // Confirma con la API (GET /panel/sesion): si lo bloquearon o le cambiaron el rol, se ve ya.
+    validarSesion().then((confirmada) => (confirmada ? setSesion(confirmada) : router.replace('/')));
   }, [router]);
 
   if (!sesion) return null;

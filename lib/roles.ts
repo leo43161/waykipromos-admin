@@ -1,23 +1,26 @@
-// Roles del personal (tabla ROL). El turista ("usuario") no entra acá: usa la app pública.
+// Roles del personal. La clave es el CÓDIGO del contrato (el que va en la base y en el JWT); `nombre` es cómo se
+// muestra en el panel. El turista no entra acá: usa la app pública.
 // La UI solo MUESTRA según el rol; cada permiso lo valida el backend en cada pedido.
 
-export type Rol = 'admin' | 'creador' | 'prestador' | 'empleado';
+import type { Rol } from './api';
+
+export type { Rol };
 
 export const ROLES: Record<Rol, { nombre: string; quien: string; puede: string[] }> = {
-  admin: {
+  superadmin: {
     nombre: 'Administrador',
     quien: 'Equipo técnico de Wayki Promo, con acceso total.',
-    puede: ['Todo lo que hace el Ente', 'Crear y dar de baja usuarios de cualquier rol', 'Configuración y registro de actividad'],
+    puede: ['Todo lo que hace el Ente', 'Crear usuarios del Ente y otros administradores', 'Canjear cupones para probar'],
   },
-  creador: {
+  admin_ente: {
     nombre: 'Creador',
     quien: 'Equipo del Ente Tucumán Turismo.',
-    puede: ['Dar de alta prestadores y crear sus usuarios', 'Crear, editar y aprobar cupones', 'Ver visitantes y reportes'],
+    puede: ['Dar de alta comercios y crear sus usuarios', 'Ver, pausar o dar de baja cualquier promoción', 'Ver visitantes, reportes y actividad'],
   },
-  prestador: {
+  encargado: {
     nombre: 'Prestador',
     quien: 'Encargado de un comercio adherido.',
-    puede: ['Crear y editar los cupones de su comercio', 'Crear y editar a sus empleados', 'Ver los canjes de su comercio'],
+    puede: ['Crear y publicar las promociones de su comercio', 'Crear y administrar a sus empleados', 'Canjear cupones y ver los canjes de su comercio'],
   },
   empleado: {
     nombre: 'Empleado',

@@ -1,55 +1,100 @@
-// Sesión del personal — todavía SIN backend.
-//
-// TODO(backend) — contrato esperado:
-//   POST /staff/login   body { usuario, password }   (USUARIO.nombreu)
-//     200 → SesionStaff (y cookie de sesión httpOnly, Secure, SameSite=Strict)
-//     401 → usuario o contraseña incorrectos (mismo mensaje para ambos casos)
-//     423 → usuario desactivado o bloqueado por intentos
-//   POST /staff/logout  → 204
-//   GET  /staff/sesion  → 200 SesionStaff | 401
-//   Contraseñas con hash lento (argon2id o bcrypt): USUARIO.password VARCHAR(45) no alcanza, pasar a VARCHAR(255).
-//   Limitar intentos por usuario e IP. El rol y el prestador salen SIEMPRE de la base, nunca del cliente.
-// Cuando exista: ingresar() hace el fetch con credentials: 'include' y getSesion() consulta /staff/sesion.
+// Sesión del personal (contrato: POST /auth/login y GET /panel/sesion, etapa "sesion" de lib/api.ts).
+// Mientras esa etapa no use la API real, la responde lib/simulador.ts con los usuarios de prueba.
+// El token (12 h) vive en sessionStorage: se borra al cerrar la pestaña. El rol y el comercio que se muestran salen
+// de la API; los permisos de verdad los valida el backend en cada pedido.
 
-import type { Rol } from './roles';
+import { api, ErrorApi, type LoginApi, type Rol, type UsuarioSesionApi } from './api';
 
 export type SesionStaff = {
   usuario: string;
   nombre: string;
   rol: Rol;
   prestador?: string; // nombre del comercio (prestador y empleado)
+  comercioId: number | null;
 };
 
-const KEY = 'wayki-admin-sesion';
+const K_TOKEN = 'wayki-admin-token';
+const K_SESION = 'wayki-admin-sesion';
 
-export async function ingresar(_usuario: string, _password: string): Promise<SesionStaff> {
-  throw new Error('sin-servidor');
+const aSesion = (u: UsuarioSesionApi): SesionStaff => ({
+  usuario: u.usuario,
+  nombre: u.nombre,
+  rol: u.rol,
+  prestador: u.comercio?.nombre,
+  comercioId: u.comercio?.id ?? null,
+});
+
+/** Vencimiento (ms) leído del claim `exp` del propio JWT. */
+function venceEn(token: string): number {
+  try {
+    const b = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const exp = JSON.parse(atob(b + '='.repeat((4 - (b.length % 4)) % 4))).exp;
+    return typeof exp === 'number' ? exp * 1000 : 0;
+  } catch {
+    return 0;
+  }
 }
 
-/** Solo `npm run dev`: entra con un rol de prueba para diseñar las pantallas. El build lo elimina. */
-export function ingresarDePrueba(rol: Rol): SesionStaff {
-  const sesion: SesionStaff = {
-    usuario: `prueba.${rol}`,
-    nombre: { admin: 'Equipo técnico', creador: 'Carla Ente', prestador: 'Martín Ríos', empleado: 'Lucía Suárez' }[rol],
-    rol,
-    prestador: rol === 'prestador' || rol === 'empleado' ? 'Patio del Jardín' : undefined,
-  };
+function guardar(token: string | null, sesion: SesionStaff | null) {
   try {
-    sessionStorage.setItem(KEY, JSON.stringify(sesion));
-  } catch {}
-  return sesion;
+    if (token && sesion) {
+      sessionStorage.setItem(K_TOKEN, token);
+      sessionStorage.setItem(K_SESION, JSON.stringify(sesion));
+    } else {
+      sessionStorage.removeItem(K_TOKEN);
+      sessionStorage.removeItem(K_SESION);
+    }
+  } catch {
+    // storage bloqueado: la sesión no se recuerda
+  }
 }
 
-export function getSesion(): SesionStaff | null {
+/** Token vigente (o null). Va en Authorization: Bearer de cada pedido. */
+export function getToken(): string | null {
   try {
-    return JSON.parse(sessionStorage.getItem(KEY) ?? 'null');
+    const token = sessionStorage.getItem(K_TOKEN);
+    return token && venceEn(token) > Date.now() ? token : null;
   } catch {
     return null;
   }
 }
 
-export function salir() {
+/** Sesión guardada, sin preguntar a la API (para pintar en el acto). */
+export function getSesion(): SesionStaff | null {
+  if (!getToken()) return null;
   try {
-    sessionStorage.removeItem(KEY);
-  } catch {}
+    return JSON.parse(sessionStorage.getItem(K_SESION) ?? 'null');
+  } catch {
+    return null;
+  }
+}
+
+/** POST /auth/login. Tira ErrorApi con el mensaje ya escrito (credenciales, bloqueado, demasiados intentos…). */
+export async function ingresar(usuario: string, password: string): Promise<SesionStaff> {
+  const r = await api<LoginApi>('sesion', 'POST', '/auth/login', { cuerpo: { usuario, password } });
+  const sesion = aSesion(r.usuario);
+  guardar(r.token, sesion);
+  return sesion;
+}
+
+/** GET /panel/sesion: confirma la sesión con la API (un bloqueo o un cambio de rol se ven al instante). */
+export async function validarSesion(): Promise<SesionStaff | null> {
+  const token = getToken();
+  if (!token) return null;
+  try {
+    const sesion = aSesion(await api<UsuarioSesionApi>('sesion', 'GET', '/panel/sesion', { token }));
+    guardar(token, sesion);
+    return sesion;
+  } catch (e) {
+    if (e instanceof ErrorApi && (e.http === 401 || e.http === 403)) {
+      guardar(null, null);
+      return null;
+    }
+    return getSesion(); // sin conexión: seguimos con lo guardado
+  }
+}
+
+/** Con un JWT sin estado no hace falta endpoint: se borra el token. */
+export function salir() {
+  guardar(null, null);
 }
