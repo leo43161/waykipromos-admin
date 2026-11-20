@@ -4,6 +4,35 @@ Registro de sesiones de trabajo. Lo más nuevo arriba. Formato: fecha, qué se h
 
 ---
 
+## 2026-11-20 (tarde) — Marco del panel, inicio con resumen y Comercios (Ente)
+
+**Hecho**
+- `app/(panel)/layout.tsx` + `components/Marco.tsx`: sesión una sola vez (`useSesion()`), barra con quién está y
+  "Salir", menú por rol (a la izquierda en escritorio, franja deslizable en el celular) y corte de las rutas que el
+  rol no tiene. Las secciones salen de `SECCIONES` en `lib/roles.ts`. Se borró `Encabezado.tsx`.
+- Inicio (`GET /panel/resumen`): Ente y encargado ven el período (7/30/90 días): cifras, gráfico diario de cupones y
+  canjes (`GraficoDiario.tsx`: colores validados con el validador de dataviz, cursor con el valor del día, flechas
+  del teclado y tabla), categorías, promociones más elegidas y últimos movimientos. El empleado, sus canjes de hoy.
+- Comercios (`/comercios/`, `?id=` para la ficha): búsqueda, filtros por estado y categoría, paginado; ficha con
+  cifras, datos, logo y equipo; alta y edición con los errores por campo de la API; suspender (con motivo) y reactivar.
+- Comunes: `lib/useCarga.ts` (carga + 401 → login), `lib/formato.ts`, `Dialogo.tsx`, `Gestion.module.css`.
+- Verificado en el navegador (build servido estático): inicio, gráfico, comercios, alta con errores, suspender y
+  reactivar. 42 chequeos. Build ok.
+
+**Estado de la API del backend** (pull del 2026-11-20, `cde3961`)
+- Tiene rutas propias (`/admin/*`, `/comercio/*`, `/canjes/validar|confirmar`), todavía no las `/panel/*` del contrato,
+  y sigue con aprobación de promociones (PENDIENTE/RECHAZADA), que el contrato sacó.
+- Las rutas `/admin/*` solo piden token (no controlan el rol).
+- Por eso el panel sigue 100 % con el simulador: se puede mostrar completo aunque el backend no llegue.
+
+**Plan al 3 de diciembre**
+- 21–24/11: Promociones (Ente: todas, ver, pausar, dar de baja; prestador: crear, editar, publicar, foto) y Usuarios.
+- 25–27/11: Visitantes (listado y ficha), Reportes (observatorio con filtros y CSV) y Actividad.
+- 28–30/11: Prestador (sus promociones, su equipo, historial de canjes) y "Mis canjes" del empleado.
+- 1–2/12: pulido, prueba de punta a punta en producción y lo que el backend tenga listo encendido por etapas.
+
+---
+
 ## 2026-11-20 — Canjear un cupón
 
 **Hecho**

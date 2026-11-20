@@ -9,25 +9,30 @@ export type { Rol };
 /** Pueden canjear en el mostrador (POST /panel/canjes). */
 export const CANJEAN: Rol[] = ['superadmin', 'encargado', 'empleado'];
 
-export const ROLES: Record<Rol, { nombre: string; quien: string; puede: string[] }> = {
+export const ROLES: Record<Rol, { nombre: string; quien: string }> = {
   superadmin: {
     nombre: 'Administrador',
     quien: 'Equipo técnico de Wayki Promo, con acceso total.',
-    puede: ['Todo lo que hace el Ente', 'Crear usuarios del Ente y otros administradores', 'Canjear cupones para probar'],
   },
   admin_ente: {
     nombre: 'Creador',
     quien: 'Equipo del Ente Tucumán Turismo.',
-    puede: ['Dar de alta comercios y crear sus usuarios', 'Ver, pausar o dar de baja cualquier promoción', 'Ver visitantes, reportes y actividad'],
   },
   encargado: {
     nombre: 'Prestador',
     quien: 'Encargado de un comercio adherido.',
-    puede: ['Crear y publicar las promociones de su comercio', 'Crear y administrar a sus empleados', 'Canjear cupones y ver los canjes de su comercio'],
   },
   empleado: {
     nombre: 'Empleado',
     quien: 'Personal del comercio que atiende al turista.',
-    puede: ['Canjear cupones en el mostrador', 'Ver sus canjes'],
   },
 };
+
+const ENTE: Rol[] = ['superadmin', 'admin_ente'];
+
+/** Secciones del menú (cada una es una ruta estática). El menú y el acceso a cada ruta salen de acá. */
+export const SECCIONES: { ruta: string; nombre: string; roles: Rol[] }[] = [
+  { ruta: '/panel/', nombre: 'Inicio', roles: ['superadmin', 'admin_ente', 'encargado', 'empleado'] },
+  { ruta: '/canjear/', nombre: 'Canjear cupón', roles: CANJEAN },
+  { ruta: '/comercios/', nombre: 'Comercios', roles: ENTE },
+];

@@ -43,18 +43,26 @@ node pruebas/simulador.mjs    # 42 chequeos del simulador, conectado al del turi
 ```
 app/layout.tsx           metadata (noindex, nofollow), fuentes Montserrat + Anton, skip-link
 app/page.tsx             login (escena oscura del kit + formulario)   → /waykipromos/admin/
-app/panel/page.tsx       inicio según el rol                           → /waykipromos/admin/panel/
-app/canjear/page.tsx     canjear un cupón (empleado, encargado, superadmin) → /waykipromos/admin/canjear/
+app/(panel)/layout.tsx   todas las pantallas con sesión van en el grupo (panel) (no cambia la URL) → components/Marco.tsx
+app/(panel)/panel/       inicio según el rol (resumen del período)     → /waykipromo/admin/panel/
+app/(panel)/canjear/     canjear un cupón (empleado, encargado, superadmin)
+app/(panel)/comercios/   comercios del Ente: listado, ficha (?id=), alta, edición, suspensión, logo
 app/globals.css          tokens + base (COMPARTIDO con turista/)
 components/Brand.tsx     logo Wayki | PROMO (COMPARTIDO)
 components/Login.tsx     formulario + usuarios de prueba (mientras `sesion` esté simulada)
 components/Panel.tsx     inicio por rol; valida la sesión con GET /panel/sesion; sin sesión vuelve al login
-components/Encabezado.tsx barra de arriba del panel (logo + Salir)
+components/Marco.tsx     sesión (useSesion), barra de arriba y menú por rol; corta las secciones que el rol no tiene
+components/Gestion.module.css estilos comunes de las pantallas de gestión (filtros, tabla, ficha, diálogos)
+components/Dialogo.tsx   ventana modal con <dialog> nativo
+components/GraficoDiario.tsx cupones y canjes por día (colores validados con dataviz; cursor, flechas y tabla)
+components/Comercios.tsx comercios (Ente)
 components/Canjear.tsx   canje: escanear o escribir → ver el cupón (validar) → canjear; errores con su detalle
 components/Camara.tsx    cámara trasera + recuadro; lee el QR con BarcodeDetector o jsQR (se descarga solo si hace falta)
 lib/api.ts               cliente de la API + tipos del contrato + etapas (NEXT_PUBLIC_API_ETAPAS)
 lib/simulador.ts         backend simulado de los 35 endpoints del panel (conectado al simulador del turista)
-lib/roles.ts             roles (códigos del contrato) y qué puede cada uno
+lib/roles.ts             roles (códigos del contrato) y SECCIONES: el menú y qué rol entra a cada ruta
+lib/useCarga.ts          carga de datos de una pantalla (cargando, error, recargar; 401 → login)
+lib/formato.ts           fechas (hora de Tucumán) y números
 lib/sesion.ts            ingresar (POST /auth/login), getToken, getSesion, validarSesion, salir
 lib/asset.ts             antepone el basePath (COMPARTIDO)
 pruebas/simulador.mjs    prueba del simulador (node, sin dependencias)
@@ -89,7 +97,7 @@ pruebas/simulador.mjs    prueba del simulador (node, sin dependencias)
 
 ## Próximos pasos sugeridos
 
-1. Layout de panel (barra lateral en escritorio, navegación inferior en celular) con las secciones del rol.
-2. ~~Canjear cupón~~ (hecho 2026-11-20). Falta "Mis canjes" (GET /panel/canjes) para el empleado.
-3. Prestador: mis promociones (crear, publicar, pausar) + mi equipo.
-4. Creador: prestadores, usuarios, visitantes, reportes, actividad.
+Hechos: marco con menú por rol, canjear, inicio con resumen, comercios. Una sección nueva = su ruta en
+`app/(panel)/` + su línea en `SECCIONES` (`lib/roles.ts`) + estilos de `Gestion.module.css`.
+Plan al 3 de diciembre (ver BITACORA): promociones → usuarios → visitantes → reportes → actividad → canjes
+(historial) → prestador (sus promociones y su equipo, reusando las mismas pantallas).

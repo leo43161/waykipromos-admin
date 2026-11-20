@@ -4,15 +4,14 @@
 // Escanear o escribir el código → ver el cupón (validar no cambia nada) → canjear (definitivo).
 // Qué se puede canjear lo decide la API: la pantalla nunca da un canje por hecho sin su respuesta.
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Camara from '@/components/Camara';
-import Encabezado from '@/components/Encabezado';
+import { useSesion } from '@/components/Marco';
 import { api, conApi, ErrorApi, type CanjeHechoApi, type CuponEnMostradorApi } from '@/lib/api';
 import { asset } from '@/lib/asset';
-import { CANJEAN } from '@/lib/roles';
-import { getSesion, getToken, salir, type SesionStaff } from '@/lib/sesion';
+import { fecha, hora } from '@/lib/formato';
+import { getToken, salir } from '@/lib/sesion';
 import { CODIGOS_DE_PRUEBA } from '@/lib/simulador';
 import s from './Canjear.module.css';
 
@@ -27,9 +26,6 @@ type Paso =
   | { tipo: 'hecho'; datos: Hecho };
 
 const SIMULADO = !conApi('canje');
-const TZ = 'America/Argentina/Tucuman';
-const fecha = (iso: string) => new Date(iso).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', timeZone: TZ });
-const hora = (iso: string) => new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: TZ });
 const DIAS: Record<string, string> = { LUN: 'lunes', MAR: 'martes', MIE: 'miércoles', JUE: 'jueves', VIE: 'viernes', SAB: 'sábados', DOM: 'domingos' };
 const dias = (d: string[]) => new Intl.ListFormat('es-AR').format(d.map((x) => DIAS[x] ?? x));
 /** Enfoca el título de cada paso cuando aparece (el lector de pantalla y el teclado siguen el cambio). */
@@ -51,18 +47,11 @@ function detalleDe(e: ErrorApi): string | null {
 
 export default function Canjear() {
   const router = useRouter();
-  const [sesion, setSesion] = useState<SesionStaff | null>(null);
+  const sesion = useSesion();
   const [paso, setPaso] = useState<Paso>({ tipo: 'escanear' });
   const [escrito, setEscrito] = useState('');
   const [obs, setObs] = useState('');
   const [enviando, setEnviando] = useState(false);
-
-  useEffect(() => {
-    const actual = getSesion();
-    if (!actual) return router.replace('/');
-    if (!CANJEAN.includes(actual.rol)) return router.replace('/panel/');
-    setSesion(actual);
-  }, [router]);
 
   const otro = () => { setEscrito(''); setPaso({ tipo: 'escanear' }); };
 
@@ -102,7 +91,7 @@ export default function Canjear() {
       const d = e instanceof ErrorApi ? (e.detalles as Detalles | null) : null;
       // Reintento tras un corte: este paso viene de un cupón sin usar, así que si figura canjeado por mí, fue este
       // mismo pedido que llegó (el contrato lo prevé así).
-      if (e instanceof ErrorApi && e.codigo === 'CUPON_YA_CANJEADO' && d?.cupon && d.promocion && d.turista && d.canjeado_el && d.canjeado_por?.id === sesion?.id) {
+      if (e instanceof ErrorApi && e.codigo === 'CUPON_YA_CANJEADO' && d?.cupon && d.promocion && d.turista && d.canjeado_el && d.canjeado_por?.id === sesion.id) {
         setPaso({ tipo: 'hecho', datos: { cupon: d.cupon, promocion: d.promocion, turista: d.turista, canjeado_el: d.canjeado_el } });
       } else {
         fallo(e, () => canjear(codigo, observaciones));
@@ -112,13 +101,9 @@ export default function Canjear() {
     }
   }
 
-  if (!sesion) return null;
-
   return (
     <>
-      <Encabezado />
       <main id="contenido" className={`${s.main} content-width`}>
-        <Link href="/panel/" className={s.volver}>← Inicio</Link>
         <h1 className={s.titulo}>Canjear un cupón</h1>
 
         {paso.tipo === 'escanear' && (
