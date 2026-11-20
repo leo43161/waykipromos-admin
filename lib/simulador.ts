@@ -643,6 +643,10 @@ const RUTAS: [Metodo, RegExp, Manejador][] = [
   ['GET', /^\/categorias$/, () => ok(CATEGORIAS)],
   ['GET', /^\/modalidades$/, () => ok(MODALIDADES)],
   ['GET', /^\/circuitos$/, () => ok(CIRCUITOS)],
+  ['GET', /^\/encuesta\/opciones$/, () => {
+    const ops = (r: Record<number, string>) => Object.entries(r).map(([id, nombre]) => ({ id: Number(id), nombre }));
+    return ok({ rangos_edad: ops(RANGOS), duraciones: ops(DURACIONES), motivos: ops(MOTIVOS), companias: ops(COMPANIAS), medios: ops(MEDIOS), provincias: ops(PROVINCIAS), paises: ops(PAISES) });
+  }],
   ['GET', /^\/localidades$/, ({ q }) => ok(LOCALIDADES.filter((l) => !Number(q.get('circuito_id')) || l.circuito_id === Number(q.get('circuito_id'))))],
 
   // ---- sesión ----

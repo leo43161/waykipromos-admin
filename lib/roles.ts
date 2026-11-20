@@ -36,6 +36,7 @@ export const SECCIONES: { ruta: string; nombre: string; roles: Rol[]; nombrePara
   { ruta: '/canjear/', nombre: 'Canjear cupón', roles: CANJEAN },
   { ruta: '/comercios/', nombre: 'Comercios', roles: ENTE },
   { ruta: '/promociones/', nombre: 'Promociones', roles: [...ENTE, 'encargado'] },
+  { ruta: '/visitantes/', nombre: 'Visitantes', roles: ENTE },
   { ruta: '/usuarios/', nombre: 'Usuarios', roles: [...ENTE, 'encargado'], nombrePara: { encargado: 'Mi equipo' } },
 ];
 

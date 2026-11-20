@@ -4,6 +4,28 @@ Registro de sesiones de trabajo. Lo más nuevo arriba. Formato: fecha, qué se h
 
 ---
 
+## 2026-11-20 (noche, 3) — Visitantes + revisión contra la API y la base
+
+**Hecho**
+- `/visitantes/` (solo Ente): búsqueda, procedencia (provincias de Argentina y otros países), edad y fecha de registro;
+  tabla con estadía, compañía y cupones/canjes; ficha (`?id=`) con el perfil de viaje (la encuesta). Sin correo:
+  datos personales, lo justo.
+- "Exportar CSV" con los mismos filtros que se ven (`lib/descargar.ts`, `GET /panel/exportar/visitantes`).
+- Simulador: `GET /encuesta/opciones` (las listas de la encuesta, que ya define el contrato para el turista).
+- Contrato: el ejemplo de `/encuesta/opciones` tenía ids de países que no son los de la base (Chile 43 → 53,
+  Uruguay 225 → 244). Corregido en `datos.mjs` (falta republicar el artefacto, junto con `imagen_url`).
+
+**Revisión contra la base real (`db/huakipromo.sql`)**
+- Los estados del panel son los de la base: comercios `estado_autorizacion` (PENDIENTE, AUTORIZADO, RECHAZADO,
+  SUSPENDIDO), promociones (BORRADOR, PUBLICADA, PAUSADA, FINALIZADA, BAJA), cupones (EMITIDO, CANJEADO, VENCIDO,
+  ANULADO), usuarios (PENDIENTE, ACTIVO, BLOQUEADO, BAJA). Los ids de países y provincias del simulador son los de la base.
+- La encuesta del visitante sale de `encuestas_turisticas` (edad, provincia o país, estadía, compañía, motivo, medio).
+- Lo que el panel usa y la base todavía no tiene lo agrega `db/propuesta_contrato_api.sql` (no aplicado):
+  `usuarios.nombre/email/ultimo_acceso`, `promociones.imagen_url`, `comercios.logo_url`, tablas `actividad` y
+  `login_intentos`, la vista `vw_promociones` y los procedimientos.
+
+---
+
 ## 2026-11-20 (noche, 2) — Usuarios y "Mi equipo"
 
 **Hecho**

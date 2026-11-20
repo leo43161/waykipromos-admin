@@ -6,7 +6,7 @@
 // Lo que no está activado lo responde lib/simulador.ts con el MISMO formato y los mismos códigos de error.
 // Etapas (los grupos del contrato) y lo que tiene que tener la API para encender cada una:
 //   sesion       POST /auth/login · GET /panel/sesion · PUT /panel/password · GET /panel/resumen
-//   catalogos    GET /categorias · /modalidades · /circuitos · /localidades
+//   catalogos    GET /categorias · /modalidades · /circuitos · /localidades · /encuesta/opciones
 //   canje        POST /panel/canjes/validar · POST /panel/canjes · GET /panel/canjes
 //   promociones  /panel/promociones (listar, ver, crear, editar, estado, imagen)
 //   comercios    /panel/comercios (listar, ver, crear, editar, estado, logo)
@@ -231,6 +231,8 @@ export type VisitanteApi = {
   ultimo_acceso: string | null;
 };
 
+/** GET /encuesta/opciones → data: las listas de la encuesta del turista (ids de la base; paises sin Argentina). */
+export type OpcionesEncuestaApi = Record<'rangos_edad' | 'duraciones' | 'motivos' | 'companias' | 'medios' | 'provincias' | 'paises', Opcion[]>;
 export type ItemReporte = { id?: number; etiqueta: string; cantidad: number; canjeados?: number };
 export type ReporteApi = {
   periodo: { desde: string; hasta: string };
