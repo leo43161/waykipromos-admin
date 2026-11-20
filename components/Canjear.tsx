@@ -10,7 +10,7 @@ import Camara from '@/components/Camara';
 import { useSesion } from '@/components/Marco';
 import { api, conApi, ErrorApi, type CanjeHechoApi, type CuponEnMostradorApi } from '@/lib/api';
 import { asset } from '@/lib/asset';
-import { fecha, hora } from '@/lib/formato';
+import { dias, fecha, hora } from '@/lib/formato';
 import { getToken, salir } from '@/lib/sesion';
 import { CODIGOS_DE_PRUEBA } from '@/lib/simulador';
 import s from './Canjear.module.css';
@@ -26,8 +26,6 @@ type Paso =
   | { tipo: 'hecho'; datos: Hecho };
 
 const SIMULADO = !conApi('canje');
-const DIAS: Record<string, string> = { LUN: 'lunes', MAR: 'martes', MIE: 'miércoles', JUE: 'jueves', VIE: 'viernes', SAB: 'sábados', DOM: 'domingos' };
-const dias = (d: string[]) => new Intl.ListFormat('es-AR').format(d.map((x) => DIAS[x] ?? x));
 /** Enfoca el título de cada paso cuando aparece (el lector de pantalla y el teclado siguen el cambio). */
 const enfocar = (el: HTMLElement | null) => el?.focus();
 
@@ -39,7 +37,7 @@ function detalleDe(e: ErrorApi): string | null {
     case 'CUPON_OTRO_COMERCIO': return 'Solo se canjea en el comercio de la promoción.';
     case 'CUPON_YA_CANJEADO': return d?.canjeado_el ? `Lo canjeó ${d.canjeado_por?.nombre ?? 'alguien del comercio'} el ${fecha(d.canjeado_el)} a las ${hora(d.canjeado_el)}.` : null;
     case 'CUPON_VENCIDO': return d?.cupon ? `Venció el ${fecha(d.cupon.vence_el)}.` : null;
-    case 'FUERA_DE_DIA': return d?.promocion?.dias_validos ? `Vale los ${dias(d.promocion.dias_validos)}.` : null;
+    case 'FUERA_DE_DIA': return d?.promocion?.dias_validos ? `Vale ${dias(d.promocion.dias_validos)}.` : null;
     case 'FUERA_DE_HORARIO': return d?.promocion?.horario ? `Vale de ${d.promocion.horario.desde} a ${d.promocion.horario.hasta}.` : null;
     default: return null;
   }

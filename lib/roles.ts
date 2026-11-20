@@ -35,4 +35,5 @@ export const SECCIONES: { ruta: string; nombre: string; roles: Rol[] }[] = [
   { ruta: '/panel/', nombre: 'Inicio', roles: ['superadmin', 'admin_ente', 'encargado', 'empleado'] },
   { ruta: '/canjear/', nombre: 'Canjear cupón', roles: CANJEAN },
   { ruta: '/comercios/', nombre: 'Comercios', roles: ENTE },
+  { ruta: '/promociones/', nombre: 'Promociones', roles: [...ENTE, 'encargado'] },
 ];

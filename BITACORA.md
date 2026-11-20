@@ -4,6 +4,23 @@ Registro de sesiones de trabajo. Lo más nuevo arriba. Formato: fecha, qué se h
 
 ---
 
+## 2026-11-20 (noche) — Promociones (Ente y encargado)
+
+**Hecho**
+- `/promociones/`: el Ente ve las de todos (filtro por comercio); el encargado, "Mis promociones". Búsqueda, estado,
+  categoría y paginado.
+- Ficha (`?id=`): foto con el beneficio encima, si se ve o no en la app, cifras (cupos, guardados, canjes, quedan),
+  detalle y foto. Botones según los pasos del contrato (publicar, pausar, volver a publicar, finalizar, dar de baja),
+  cada uno con su explicación y confirmación; el Ente puede dejar un motivo y destacar.
+- Crear/editar (`?nueva`, `?id=&editar`): beneficio (modalidad o personalizado), fechas, cupos, días, horario,
+  categoría, foto y destacada (Ente). "Guardar como borrador" o "Publicar". Errores por campo de la API.
+- `dias()` en `lib/formato.ts` ("de lunes a viernes"), también en Canjear.
+- Verificado en el navegador como Ente (pausar con motivo, volver a publicar, destacar, crear con errores y publicada con
+  días y horario) y como encargado (solo las suyas, sin comercio ni destacar, la ajena da "no existe", Comercios
+  lo devuelve al inicio). 42 chequeos. Build ok.
+
+---
+
 ## 2026-11-20 (tarde) — Marco del panel, inicio con resumen y Comercios (Ente)
 
 **Hecho**

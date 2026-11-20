@@ -14,3 +14,11 @@ export const diaTucuman = (n = 0) => new Date(Date.now() - 3 * 3600_000 - n * 86
 
 /** Fecha corta de un día "AAAA-MM-DD" (sin correrse de día por la zona horaria). */
 export const dia = (d: string) => fechaCorta(`${d}T12:00:00-03:00`);
+
+const DIA: Record<string, string> = { LUN: 'lunes', MAR: 'martes', MIE: 'miércoles', JUE: 'jueves', VIE: 'viernes', SAB: 'sábados', DOM: 'domingos' };
+/** Días de una promoción en palabras: "todos los días", "de lunes a viernes", "los sábados y domingos"… */
+export function dias(d: string[] | null) {
+  if (!d?.length || d.length === 7) return 'todos los días';
+  if (d.join() === 'LUN,MAR,MIE,JUE,VIE') return 'de lunes a viernes';
+  return `los ${new Intl.ListFormat('es-AR').format(d.map((x) => DIA[x] ?? x))}`;
+}

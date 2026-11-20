@@ -68,9 +68,37 @@
 .cerrar { width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: var(--paper); font-size: 24px; line-height: 1; }
 .form { display: grid; gap: 14px; }
 .form :global(.field) textarea { width: 100%; min-height: 96px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; font-size: 16px; font-weight: 500; resize: vertical; }
-.dosCol { display: grid; gap: 14px; }
+.dosCol { display: grid; align-items: end; gap: 14px; }
 @media (min-width: 560px) { .dosCol { grid-template-columns: 1fr 1fr; } }
 .errorCampo { font-size: 12px; font-weight: 600; color: var(--danger); }
 .botones { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .peligro { background: var(--danger); color: var(--white); }
 .peligro:hover { background: #942f22; }
+
+/* Formularios largos (promociones) */
+.formAncho { max-width: 860px; }
+.tresCol { display: grid; align-items: end; gap: 14px; }
+@media (min-width: 700px) { .tresCol { grid-template-columns: 1fr 1fr 1fr; } }
+.dias { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }
+.dias legend { margin-bottom: 8px; padding: 0; font-size: 13px; font-weight: 700; }
+.dias legend small { margin-left: 6px; font-weight: 500; color: var(--muted); }
+.dias > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; }
+.chip span { display: inline-flex; align-items: center; min-width: 52px; min-height: 40px; justify-content: center; padding: 6px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--white); font-size: 14px; font-weight: 700; cursor: pointer; }
+.chip input:checked + span { border-color: var(--green); background: var(--green); color: var(--white); }
+.chip input:focus-visible + span { outline: 3px solid var(--orange); outline-offset: 2px; }
+.check { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.check input { width: 20px; height: 20px; accent-color: var(--green); }
+
+/* Ficha de promoción: foto con el beneficio encima, como la ve el turista */
+.promoCabecera { display: grid; gap: 20px; align-items: start; }
+@media (min-width: 860px) { .promoCabecera { grid-template-columns: minmax(280px, 400px) 1fr; } }
+.promoFoto { position: relative; overflow: hidden; display: grid; place-items: center; aspect-ratio: 2 / 1; border-radius: 18px; background: var(--mint); }
+.promoFoto > img { width: 100%; height: 100%; object-fit: cover; }
+.promoFoto > img.promoSinFoto { width: 96px; height: auto; object-fit: contain; }
+.promoFoto > span { position: absolute; left: 12px; bottom: 12px; padding: 6px 12px; border-radius: 10px; background: var(--orange); color: var(--ink); font-size: 26px; }
+.promoTitulo { display: grid; gap: 8px; align-content: start; }
+.promoTitulo > span { display: flex; flex-wrap: wrap; gap: 6px; }
+.promoTitulo h1 { font-size: clamp(24px, 3vw, 32px); }
+.ancho { grid-column: 1 / -1; }
